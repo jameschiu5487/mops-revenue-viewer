@@ -311,9 +311,19 @@ th:nth-child(2) {
     text-overflow: ellipsis;
 }
 
+/* Industry column */
+td:nth-child(3),
+th:nth-child(3) {
+    min-width: 90px;
+    max-width: 110px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /* Make numeric columns more compact */
-td:nth-child(n+3),
-th:nth-child(n+3) {
+td:nth-child(n+4),
+th:nth-child(n+4) {
     max-width: 110px;
 }
 
