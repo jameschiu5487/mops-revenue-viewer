@@ -27,8 +27,8 @@ wheels/
 instance/
 .webassets-cache
 
-# Data files (optional - uncomment if you don't want to commit CSV files)
-# data/*.csv
+# Data files - CSV files are temporary and should not be committed
+data/*.csv
 
 # IDE
 .vscode/
