@@ -289,6 +289,17 @@ td.numeric {
     text-overflow: ellipsis;
 }
 
+/* Percentage color indicators */
+td.positive {
+    color: #d32f2f;
+    font-weight: 600;
+}
+
+td.negative {
+    color: #388e3c;
+    font-weight: 600;
+}
+
 /* Specific column width adjustments */
 table {
     table-layout: auto;

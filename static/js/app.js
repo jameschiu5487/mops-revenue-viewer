@@ -144,6 +144,18 @@ function renderTableBody(data, columns) {
                 td.classList.add('numeric');
             }
             
+            // Add color class for percentage columns
+            if (isPercentageColumn(col) && value !== '-') {
+                const numValue = parseFloat(String(value).replace(/,/g, ''));
+                if (!isNaN(numValue)) {
+                    if (numValue > 0) {
+                        td.classList.add('positive');
+                    } else if (numValue < 0) {
+                        td.classList.add('negative');
+                    }
+                }
+            }
+            
             tr.appendChild(td);
         });
         tableBody.appendChild(tr);
@@ -209,6 +221,15 @@ function isNumericColumn(column) {
         '當月累計營收', '去年累計營收', '前期比較 增減(%)'
     ];
     return numericColumns.includes(column);
+}
+
+function isPercentageColumn(column) {
+    const percentageColumns = [
+        '上月比較 增減(%)', 
+        '去年同月 增減(%)',
+        '前期比較 增減(%)'
+    ];
+    return percentageColumns.includes(column);
 }
 
 function handleSearch(e) {
