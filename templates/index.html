@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOPS Revenue Data Viewer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 MOPS Monthly Revenue Data</h1>
+            <p class="subtitle">Taiwan Stock Market Revenue Query System</p>
+        </header>
+
+        <div class="query-panel">
+            <h2>Query Parameters</h2>
+            <form id="queryForm">
+                <div class="form-group">
+                    <label for="marketType">Market Type</label>
+                    <select id="marketType" name="marketType" required>
+                        <option value="sii">Listed Companies (上市)</option>
+                        <option value="otc">OTC Companies (上櫃)</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="year">Year (ROC)</label>
+                        <input type="number" id="year" name="year" min="100" max="200" value="113" required>
+                        <small class="help-text">ROC Year (e.g., 113 = 2024 AD)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="month">Month</label>
+                        <input type="number" id="month" name="month" min="1" max="12" value="7" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="submitBtn">
+                    <span class="btn-text">Query Data</span>
+                    <span class="loader" style="display: none;"></span>
+                </button>
+            </form>
+
+            <div id="statusMessage" class="status-message"></div>
+        </div>
+
+        <div id="resultsPanel" class="results-panel" style="display: none;">
+            <div class="results-header">
+                <h2>Results</h2>
+                <div class="results-info">
+                    <span id="rowCount" class="badge"></span>
+                    <span id="fileName" class="file-name"></span>
+                </div>
+            </div>
+
+            <div class="table-controls">
+                <input type="text" id="searchBox" placeholder="Search in table..." class="search-box">
+                <button id="exportBtn" class="btn-secondary">Export to CSV</button>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="dataTable">
+                    <thead id="tableHead"></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
