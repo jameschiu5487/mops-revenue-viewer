@@ -5,6 +5,42 @@ import time
 from datetime import datetime
 import os
 
+# Industry mapping based on company code prefix
+INDUSTRY_MAPPING = {
+    '11': '水泥工業',
+    '12': '食品工業',
+    '13': '塑膠工業',
+    '14': '紡織纖維',
+    '15': '電機機械',
+    '16': '電器電纜',
+    '17': '化學生技醫療',
+    '18': '玻璃陶瓷',
+    '19': '造紙工業',
+    '20': '鋼鐵工業',
+    '21': '橡膠工業',
+    '22': '汽車工業',
+    '23': '電子工業',
+    '24': '半導體業',
+    '25': '電腦及週邊設備業',
+    '26': '光電業',
+    '27': '通信網路業',
+    '28': '電子零組件業',
+    '29': '電子通路業',
+    '30': '資訊服務業',
+    '31': '其他電子業',
+    '41': '建材營造',
+    '42': '航運業',
+    '43': '觀光餐旅',
+    '44': '金融保險',
+    '45': '貿易百貨',
+    '46': '綜合',
+    '47': '油電燃氣',
+    '48': '其他',
+    '49': '其他',
+    '50': '其他',
+    '91': '存託憑證',
+}
+
 class MOPSRevenueDownloader:
     """
     Download monthly revenue summary data from MOPS (Market Observation Post System)
@@ -15,6 +51,29 @@ class MOPSRevenueDownloader:
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         })
+    
+    @staticmethod
+    def get_industry(company_code):
+        """
+        Get industry name based on company code prefix
+        
+        Parameters:
+        -----------
+        company_code : str
+            4-digit company code
+        
+        Returns:
+        --------
+        str
+            Industry name
+        """
+        if not company_code or len(str(company_code)) < 2:
+            return '其他'
+        
+        code_str = str(company_code).strip()
+        prefix = code_str[:2]
+        
+        return INDUSTRY_MAPPING.get(prefix, '其他')
     
     def download_revenue_data(self, year, month, market_type='sii'):
         """
@@ -103,6 +162,11 @@ class MOPSRevenueDownloader:
             
             # Reset index
             combined_df = combined_df.reset_index(drop=True)
+            
+            # Add industry column based on company code
+            if len(combined_df.columns) >= 1:
+                first_col = combined_df.columns[0]
+                combined_df.insert(2, '產業別', combined_df[first_col].apply(self.get_industry))
             
             print(f"Successfully downloaded {len(combined_df)} rows of data (after cleaning)")
             return combined_df
