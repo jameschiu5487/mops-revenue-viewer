@@ -77,7 +77,34 @@ class MOPSRevenueDownloader:
             # Combine all data tables
             combined_df = pd.concat(data_tables, ignore_index=True)
             
-            print(f"Successfully downloaded {len(combined_df)} rows of data")
+            # Clean up multi-level column names
+            if isinstance(combined_df.columns, pd.MultiIndex):
+                # Flatten multi-level columns - use the second level (actual column names)
+                new_columns = []
+                for col in combined_df.columns:
+                    if len(col) > 1 and col[1] and not str(col[1]).startswith('Unnamed'):
+                        new_columns.append(col[1])
+                    elif col[0] and not str(col[0]).startswith('Unnamed'):
+                        new_columns.append(col[0])
+                    else:
+                        new_columns.append('_'.join(str(c) for c in col if c))
+                combined_df.columns = new_columns
+            
+            # Remove rows where company code is summary text or not a valid 4-digit code
+            if len(combined_df.columns) >= 2:
+                first_col = combined_df.columns[0]
+                
+                # Filter out summary rows
+                summary_keywords = ['合計', '小計', '總計', '平均']
+                combined_df = combined_df[~combined_df[first_col].astype(str).isin(summary_keywords)]
+                
+                # Only keep rows with valid 4-digit company codes
+                combined_df = combined_df[combined_df[first_col].astype(str).str.match(r'^\d{4}$', na=False)]
+            
+            # Reset index
+            combined_df = combined_df.reset_index(drop=True)
+            
+            print(f"Successfully downloaded {len(combined_df)} rows of data (after cleaning)")
             return combined_df
             
         except Exception as e:
