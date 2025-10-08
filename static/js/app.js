@@ -1,5 +1,6 @@
 let currentData = [];
 let currentColumns = [];
+let currentSearchTerm = '';
 let sortState = {
     column: null,
     ascending: true
@@ -81,6 +82,7 @@ function displayResults(result) {
     const fileName = document.getElementById('fileName');
     const tableHead = document.getElementById('tableHead');
     const tableBody = document.getElementById('tableBody');
+    const searchBox = document.getElementById('searchBox');
     
     // Show results panel
     resultsPanel.style.display = 'block';
@@ -89,6 +91,10 @@ function displayResults(result) {
     // Update info
     rowCount.textContent = `${result.row_count} rows`;
     fileName.textContent = result.filename;
+    
+    // Clear search and reset search state
+    searchBox.value = '';
+    currentSearchTerm = '';
     
     // Clear previous table
     tableHead.innerHTML = '';
@@ -174,6 +180,11 @@ function sortTable(column) {
     
     // Re-render table body
     renderTableBody(sortedData, currentColumns);
+    
+    // Re-apply search filter after sorting
+    if (currentSearchTerm) {
+        applySearch();
+    }
 }
 
 function updateSortIcons(activeColumn) {
@@ -201,13 +212,17 @@ function isNumericColumn(column) {
 }
 
 function handleSearch(e) {
-    const searchTerm = e.target.value.toLowerCase();
+    currentSearchTerm = e.target.value.toLowerCase();
+    applySearch();
+}
+
+function applySearch() {
     const tableBody = document.getElementById('tableBody');
     const rows = tableBody.getElementsByTagName('tr');
     
     Array.from(rows).forEach(row => {
         const text = row.textContent.toLowerCase();
-        if (text.includes(searchTerm)) {
+        if (text.includes(currentSearchTerm)) {
             row.classList.remove('hidden');
         } else {
             row.classList.add('hidden');
